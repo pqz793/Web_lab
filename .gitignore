@@ -1,4 +1,6 @@
 # Byte-compiled / optimized / DLL files
+exp1/dataset/maildir
+
 __pycache__/
 *.py[cod]
 *$py.class
