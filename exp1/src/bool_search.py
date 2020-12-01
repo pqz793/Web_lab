@@ -95,4 +95,3 @@ if __name__ == "__main__":
             line = line.strip('\n')
             doc_list=handle_query(line)
             print(doc_list)
-
