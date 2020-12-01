@@ -2,6 +2,7 @@ import os
 import nltk
 import re
 import operator
+import numpy as np
 from nltk.stem.porter import PorterStemmer
 from nltk.corpus import stopwords
 
@@ -14,9 +15,9 @@ path0 = "E:\Web_lab\exp1\\"  # 基础目录
 
 
 def build_stop_words_table():
-    # print(stop_words_table)
+    #print(stop_words_table)
     # 扩展英文倒排表
-    for w in ['!', ',', '.', '?', ':', '<', '>', '@', '[', ']', '(', ')', '-']:
+    for w in ['!', ',', '.', '?', ':', ';', '<', '>', '@', '[', ']', '(', ')', '-','\'\'']:
         stop_words_table.append(w)
 
 
@@ -33,15 +34,19 @@ def filter(line):
     #line = re.sub(r'[^\s]', "", line)
     return line
 
-#根据word更新倒排表
-def add_inverted_table(word):
+# 根据word更新倒排表,倒排表用字典存储，key为词项，value为一个列表
+# value[0]为词频（不去重,也就是出现该词项的文档数量）
+# value[1]字典，为含有该词项的文档（去重）以及该词项在文档中出现的次数
+def add_inverted_table(word, freq):
     if word not in inverted_table:
-        temp = []
-        temp.append(i)
+        temp = [1, []]
+        temp[1].append([i, freq])
         inverted_table[word] = temp
     else:
-        if i not in inverted_table[word]:
-            inverted_table[word].append(i)
+        inverted_table[word][0] += 1
+        if [i, freq] not in inverted_table[word][1]:
+            inverted_table[word][1].append([i, freq])
+    
 
 
 #根据传入的path处理对应的文件，包含预处理和建立倒排表
@@ -55,15 +60,17 @@ def build_invert_list(path):
     for line in iter_f:  # 遍历文件，按行遍历，读取文本，每个文本对应一个字符串
         line = filter(line)  # 只读取主题和正文
         str = str + line
-
     f.close()
-    text = nltk.word_tokenize(str)  # 分词
-    # print(text)
-    #s_temp = []
+    text = nltk.word_tokenize(str.lower())  # 分词，并转化为小写，方便通过停用词表去除
+    text1 = []
     for word in text:
         w = porter_stemmer.stem(word)  # 词根化处理
-        if w not in stop_words_table:  # 去停用词处理
-            add_inverted_table(w)
+        text1.append(w)
+    fdist = nltk.FreqDist(text1)
+    for word in text1:
+        #w = porter_stemmer.stem(word)  # 词根化处理
+        if word not in stop_words_table:  # 去停用词处理
+            add_inverted_table(word, fdist[word])
             # s_temp.append(w)
     # s.append(s_temp)
     # print(s_temp)
@@ -90,10 +97,10 @@ def file_read():
 
 
 def write_1000_inverted_table():
-    list1 = sorted(inverted_table.items(), key=lambda item: len(item[1]), reverse=True)
+    list1 = sorted(inverted_table.items(), key=lambda item: item[1][0], reverse=True)
     path_inverted_table = path0 + "output/inverted_table.txt"
     file_inverted_table = open(path_inverted_table, 'w+')
-    for j in range(20): #后续改为1000
+    for j in range(50): #后续改为1000
         file_inverted_table.write(list1[j][0] + ' : ' + str(list1[j][1]) + '\n')
     file_inverted_table.close()
 
@@ -102,6 +109,8 @@ def main():
     build_stop_words_table()
     file_read()
     write_1000_inverted_table()
+    #for word in inverted_table:
+        #print(word, inverted_table[word])
 
 
 if __name__ == "__main__":
