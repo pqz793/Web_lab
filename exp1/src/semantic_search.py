@@ -8,7 +8,7 @@ from nltk.stem.porter import PorterStemmer
 #np.set_printoptions(threshold=np.inf)  # 保证完整输出矩阵
 porter_stemmer = PorterStemmer()
 
-path0 = "E:\Web_lab\exp1\\"  # 基础目录
+path0 = "D:\Web\lab\exp1\\"  # 基础目录
 N = 3034
 N_item = 1000
 word_list = []
@@ -66,7 +66,7 @@ def main():
     path_inverted_table = path0 + "output\\inverted_table.txt"
     sparse_matrix = sparse.load_npz(path_npz)
     tf_idf_matrix = sparse_matrix.toarray()
-    #print(tf_idf_matrix)
+    print(tf_idf_matrix)
 
     file_query = open(path_query)
     iter_f = iter(file_query)

@@ -128,9 +128,11 @@ def write_1000_inverted_table():
     file_inverted_table = open(path_inverted_table, 'w+')
     for j in range(N_item):  
         file_inverted_table.write(list1[j][0] + ' : ')
-        new_list = list1[j][1]
         del (list1[j][1][0])
-        new_list = de_repetition(new_list)
+        new_list = list1[j][1]
+        #new_list = list(set(list1[j][1]))
+        #list[j][1] = [5, [1,2], [1,2], [1,2], [2,3]]
+        new_list = de_repetition2(new_list)
         #print(new_list)
         for k in range(0, len(new_list)):
             file_inverted_table.write(str(new_list[k][0]) + ' ')
@@ -151,6 +153,19 @@ def de_repetition(old_list):
     #print(new_list)
     return new_list
 
+#oldlist = [5, [1,2], [1,2], [1,2], [2,3]]
+def de_repetition2(old_list):
+    new_list=[old_list[0]]
+    temp = old_list[0][0]
+    for i in range(1,len(old_list)):
+        if(old_list[i][0]==temp):
+            continue
+        else:
+            new_list.append(old_list[i])
+            temp=old_list[i][0]
+    return new_list
+        
+        
 
 #@jit(nopython=True)
 def tf_idf_matrix_build(list_sorted):
@@ -158,7 +173,7 @@ def tf_idf_matrix_build(list_sorted):
     new_list = []
     for row in range(N_item):
         del (list_sorted[row][1][0])
-        new_list.append(de_repetition(list_sorted[row][1]))
+        new_list.append(de_repetition2(list_sorted[row][1]))
     #print(new_list)
     for row in range(N_item):  # 后续改为1000
         list_df.append(len(new_list[row]))
