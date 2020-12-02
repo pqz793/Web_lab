@@ -18,7 +18,8 @@ i = 0
 #N = 9
 N = 517401
 N_item = 1000
-path0 = "E:\Web_lab\exp1\\"  # 基础目录
+path0 = "D:\Web\lab\exp1\\"  # 基础目录
+nltk.download('punkt')
 tf_idf_matrix = np.zeros((N_item, N))
 list_df = []
 
@@ -187,7 +188,7 @@ def file_No_dict_write():
 
 def main():
     build_stop_words_table()
-    path_read = path0 + "dataset\maildir"
+    path_read = path0 + "data_temp1\maildir"
     #file_read()
     file_read1(path_read)
     list_sorted = write_1000_inverted_table()
