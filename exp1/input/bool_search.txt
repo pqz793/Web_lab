@@ -1,5 +1,0 @@
-spot AND NOT dynegi
-NOT spot AND dynegi OR mgusa
-( mgusa OR spot ) AND spot
-spot AND dynegi AND colleen
-dynegi OR spot OR mgusa

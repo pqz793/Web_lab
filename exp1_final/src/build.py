@@ -8,7 +8,6 @@ import operator
 import math
 import numpy as np
 np.set_printoptions(threshold=np.inf)  # 保证完整输出矩阵
-
 porter_stemmer = PorterStemmer()
 stop_words_table = stopwords.words('english')  # 创建英文默认倒排表
 file_No_dict = []
@@ -18,8 +17,7 @@ i = 0
 #N = 9
 N = 517401
 N_item = 1000
-path0 = "D:\Web\lab\exp1\\"  # 基础目录
-nltk.download('punkt')
+path0 = "E:\Web_lab\exp1\\"  # 基础目录
 tf_idf_matrix = np.zeros((N_item, N))
 list_df = []
 
@@ -28,8 +26,12 @@ def build_stop_words_table():
     # print(stop_words_table)
     # 扩展英文倒排表
     for w in ['!', ',', '.', '?', ':', ';', '<', '>', '@', '[', ']', '(', ')', '-', '\'\'', '--', '*', '$',
-              '...', '=', '\'s', '\'t', '|', '%', '..', '&', '#', '`', '``',
-              'subject', 'enron', 'thi', 'need', 'forward', 'would']:
+              '...', '=', '\'s', '\'t', '|', '%', '..', '&', '#', '`', '``', '\'', '/',
+              'subject', 'enron', 'thi', 'need', 'forward', 'would', 'enron.com', 's/enron', 'pleas', 'cc', 'ect',
+              'ha', 'wa', 'ani', 'pm', 'ee', 'still', '\'ll', '\'m', '\'re', '\'ve', 'might', 'I',
+              'may', 'n\'t', 'ga', 'also', 'hi', 'could', 'want', 'bcc', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+              'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+              '=20', '=09', '=09=09', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
         stop_words_table.append(w)
 
 
@@ -49,9 +51,7 @@ def filter(line):
 
 # 根据word更新倒排表,倒排表用字典存储，key为词项，value为一个列表
 # value[0]为词频（不去重,也就是出现该词项的文档数量）
-# value[1]字典，为含有该词项的文档（去重）以及该词项在文档中出现的次数
-
-
+# value[1]为子列表，为含有该词项的文档（去重）以及该词项在文档中出现的次数
 #@jit(nopython=True)
 def add_inverted_table(word, freq):
     if word not in inverted_table:
@@ -143,17 +143,7 @@ def write_1000_inverted_table():
     file_inverted_table.close()
     return list1
 
-# 根据传入的list_sorted建立ti_idf矩阵
 
-def de_repetition(old_list):
-    new_list = []
-    for i in old_list:
-        if i not in new_list:
-            new_list.append(i)
-    #print(new_list)
-    return new_list
-
-#oldlist = [5, [1,2], [1,2], [1,2], [2,3]]
 def de_repetition2(old_list):
     new_list=[old_list[0]]
     temp = old_list[0][0]
@@ -203,7 +193,7 @@ def file_No_dict_write():
 
 def main():
     build_stop_words_table()
-    path_read = path0 + "data_temp1\maildir"
+    path_read = path0 + "dataset\maildir"
     #file_read()
     file_read1(path_read)
     list_sorted = write_1000_inverted_table()

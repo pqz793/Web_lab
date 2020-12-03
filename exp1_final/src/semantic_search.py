@@ -8,8 +8,8 @@ from nltk.stem.porter import PorterStemmer
 #np.set_printoptions(threshold=np.inf)  # 保证完整输出矩阵
 porter_stemmer = PorterStemmer()
 
-path0 = "D:\Web\lab\exp1\\"  # 基础目录
-N = 3034
+path0 = "E:\Web_lab\exp1\\"  # 基础目录
+N = 517391
 N_item = 1000
 word_list = []
 stop_words_table = stopwords.words('english')  # 创建英文默认倒排表
@@ -18,8 +18,12 @@ def build_stop_words_table():
     # print(stop_words_table)
     # 扩展英文倒排表
     for w in ['!', ',', '.', '?', ':', ';', '<', '>', '@', '[', ']', '(', ')', '-', '\'\'', '--', '*', '$',
-              '...', '=', '\'s', '\'t', '|', '%', '..', '&', '#', '`', '``',
-              'subject', 'enron', 'thi', 'need', 'forward', 'would']:
+              '...', '=', '\'s', '\'t', '|', '%', '..', '&', '#', '`', '``', '\'', '/',
+              'subject', 'enron', 'thi', 'need', 'forward', 'would', 'enron.com', 's/enron', 'pleas', 'cc', 'ect',
+              'ha', 'wa', 'ani', 'pm', 'ee', 'still', '\'ll', '\'m', '\'re', '\'ve', 'might', 'I',
+              'may', 'n\'t', 'ga', 'also', 'hi', 'could', 'want', 'bcc', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+              'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+              '=20', '=09', '=09=09', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
         stop_words_table.append(w)
 
 
@@ -38,7 +42,7 @@ def compare(input_word_vec, normalize_matrix):
     for col in range(N):
         #print(normalize_matrix[:, col])
         #similarity.append(np.inner(normalize_matrix[:, col], input_word_vec))
-        similarity[str(col + 1)] = np.inner(normalize_matrix[:, col], input_word_vec)
+        similarity[str(col)] = np.inner(normalize_matrix[:, col], input_word_vec)
     #print(similarity)
     result = sorted(similarity.items(), key=lambda item: item[1], reverse=True)[0:10]
     return result
@@ -66,15 +70,15 @@ def main():
     path_inverted_table = path0 + "output\\inverted_table.txt"
     sparse_matrix = sparse.load_npz(path_npz)
     tf_idf_matrix = sparse_matrix.toarray()
-    print(tf_idf_matrix)
+    #print(tf_idf_matrix)
 
     file_query = open(path_query)
     iter_f = iter(file_query)
-    query_str = ""  #存放输入的查询词或词组
+    query_str = []  #存放输入的查询词或词组
     for line in iter_f:  # 遍历文件，按行遍历，读取文本，每个文本对应一个字符串
         line = re.sub(r'\n.*$', "", line)
         #w = porter_stemmer.stem(line)  # 词根化处理
-        query_str = query_str + line
+        query_str.append(line)
     file_query.close()
 
     file_inverted_table = open(path_inverted_table)
@@ -86,13 +90,13 @@ def main():
 
     normalize_matrix = tf_idf_normalize(tf_idf_matrix)
     #print(query_str)
-
-    vec = cal_input_query(query_str)
-    if np.sum(vec) == 0:
-        print("can not find")
-    else:
-        result = compare(vec, normalize_matrix)
-        print(result)
+    for word in query_str:
+        vec = cal_input_query(word)
+        if np.sum(vec) == 0:
+            print("can not find")
+        else:
+            result = compare(vec, normalize_matrix)
+            print(result)
 '''
     for word in query:
         vec = cal_input_query(word)

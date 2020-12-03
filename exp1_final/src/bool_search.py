@@ -1,3 +1,7 @@
+from nltk.stem.porter import PorterStemmer
+porter_stemmer = PorterStemmer()
+
+
 def AND(p1,p2):
     #对两个倒排表求交
     answer=[]
@@ -18,16 +22,48 @@ def AND(p1,p2):
 
 def OR(p1,p2):
     #对两个倒排表求并，注意去重
-    temp=p1+p2
-    answer = list(set(temp))
-    answer.sort()
+    answer=[]
+    len1=len(p1)
+    len2=len(p2)
+    i1=0
+    i2=0
+    while i1<len1 and i2<len2:
+        if p1[i1]==p2[i2]:
+            answer.append(p1[i1])
+            i1=i1+1
+            i2=i2+1
+        elif p1[i1]<p2[i2]:
+            answer.append(p1[i1])
+            i1=i1+1
+        else:
+            answer.append(p2[i2])
+            i2=i2+1
+    if i1<len1:
+        while i1<len1:
+           answer.append(p1[i1])
+           i1+=1
+    else:
+        while i2<len2:
+            answer.append(p2[i2]) 
+            i2+=1
     return answer
 
 def NOT(p1):
     #对一个倒排表求补
-    answer=list(range(517403))#文档数目
-    for elem in p1:
-        answer.remove(elem)
+    answer=[]
+    i1=0
+    i2=0
+    length=len(p1)
+    while i1<517391 and i2<length:
+        if i1==p1[i2]:
+            i1+=1
+            i2+=1
+        else: #i1<p1[i2]
+            answer.append(i1)
+            i1+=1
+    while i1<517391:
+        answer.append(i1)
+        i1+=1
     return answer
 
 
@@ -75,7 +111,7 @@ def factor(querylist):#//读入一个因子并返回其结果文档
         return notExp(querylist)
     else:
         i=i+1
-        return inverted_table[querylist[i-1]]
+        return inverted_table[porter_stemmer.stem(querylist[i-1])]
 
 def notExp(querylist):#取反操作
     global i,inverted_table
@@ -89,13 +125,13 @@ def notExp(querylist):#取反操作
         return NOT(notExp(querylist))
     else:
         i=i+1
-        return NOT(inverted_table[querylist[i-1]])
+        return NOT(inverted_table[porter_stemmer.stem(querylist[i-1])])
 
 
 if __name__ == "__main__":
     i=0
     inverted_table={}
-    with open("D:/GIT/Git/Web_lab/exp1/output/inverted_table.txt") as file:
+    with open("../output/inverted_table.txt") as file:
         for line in file.readlines():
             line = line.strip().split(" ")
             word=line[0]
@@ -108,10 +144,13 @@ if __name__ == "__main__":
             inverted_table[word]=line
         #print(inverted_table['mgusa'])
 
-    with open("D:/GIT/Git/Web_lab/exp1/input/bool_search.txt") as file:
+    with open("../input/bool_search.txt") as file:
         for line in file.readlines():
             line = line.strip()
             print(line)
             doc_list=handle_query(line)
             i=0
-            print(doc_list)
+            if len(doc_list)<10:
+                print(doc_list)
+            else:
+                print(doc_list[0:10])

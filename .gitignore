@@ -1,7 +1,10 @@
 # Byte-compiled / optimized / DLL files
 exp1/data*
 exp1/src/temp*
-
+exp1_final/temp*
+exp1_final/data*
+exp1_final/src/temp*
+*.zip
 __pycache__/
 *.py[cod]
 *$py.class
